@@ -23,7 +23,7 @@ namespace AppConsultaRucSunat
         {
             // Inicializa por unica vez la direcciÓn base
             if(httpClient.BaseAddress == null)
-                httpClient.BaseAddress = new Uri("http://www.sunat.gob.pe/");
+                httpClient.BaseAddress = new Uri("http://e-consultaruc.sunat.gob.pe/");
 
             // IndicaNDO la ruta de la librería. 
             rutaTessData = Application.StartupPath + @"\tessdata\";
@@ -59,7 +59,7 @@ namespace AppConsultaRucSunat
                     return null;
 
                 // Consulta el RUC enviando el codigo captcha
-                var ConsultaRuc = await httpClient.GetAsync($"cl-ti-itmrconsruc/jcrS00Alias?accion=consPorRuc&nroRuc={ruc}&codigo={captcha.Trim().ToUpper()}&tipodocumento=1");
+                var ConsultaRuc = await httpClient.GetAsync($"cl-ti-itmrconsruc/jcrS03Alias?accion=consPorRuc&razSoc=&nroRuc={ruc}&nrodoc=&contexto=ti-it&tQuery=on&search1={ruc}&tipdoc=1&search2=&coddpto=&codprov=&coddist=&search3=&codigo={captcha.Trim().ToUpper()}&tipodocumento=1");
 
                 // Si la consulta es exitosa
                 if (ConsultaRuc.IsSuccessStatusCode)
@@ -80,17 +80,17 @@ namespace AppConsultaRucSunat
                         if (listNodeTr != null)
                         {
                             // Extrae los valores de las celdas de la tabla. 
-                            var nodeRazonSocial = listNodeTr[0].Elements("td").ToArray();
+                            var nodeRazonSocial = listNodeTr[1].Elements("td").ToArray();
                             if (nodeRazonSocial != null)
                             {
                                 string ConsultaCliente = LimpiarEspacios(nodeRazonSocial[1].InnerHtml.Trim());
                                 contribuyente.RUC = ConsultaCliente.Substring(0, 11).Trim();
                                 contribuyente.RazonSocial = ConsultaCliente.Substring(13, ConsultaCliente.Length - 13).Trim();
                             }
-                            var nodeDireccion = listNodeTr[6].Elements("td").ToArray();
+                            var nodeDireccion = listNodeTr[7].Elements("td").ToArray();
                             if (ruc.StartsWith("10"))
                             {
-                                nodeDireccion = listNodeTr[7].Elements("td").ToArray();
+                                nodeDireccion = listNodeTr[8].Elements("td").ToArray();
                             }
                             if (nodeDireccion != null)
                             {
